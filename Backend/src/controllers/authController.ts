@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
+const MIN_LENGTH = 8;
 
 //nouvelle utilisateur
 export const register = async (req: Request, res: Response) => {
@@ -14,6 +15,10 @@ export const register = async (req: Request, res: Response) => {
             return res.status(400).json({message : "Utilisateur déjà existant !"});
         }
 
+        if(!password || password.length < MIN_LENGTH){
+            return res.status(400).json({message : "Le mot de passe doit contenir au minium 8 caractères !"});
+        }
+
         // Hasher le mdp compréhension de bcrypt via cette vidéo youtube : https://www.youtube.com/watch?v=_XxrfGrdrB8
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -22,10 +27,14 @@ export const register = async (req: Request, res: Response) => {
         const newUser = await User.create({
             username,
             password : hashedPassword,
-            role : role || "user",
+            role : role || "editor",
         });
-        return res.status(201).json({message: "Utilisateur créé",user : newUser});
-    } catch (error) {
+
+        const { password: _, ...userWithoutPwd } = newUser.toObject();
+        return res.status(201).json({ user: userWithoutPwd });
+    }
+
+    catch (error) {
         return res.status(500).json({message : "Erreur serveur",error});
     }
 };
