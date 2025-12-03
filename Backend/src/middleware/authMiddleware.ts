@@ -21,22 +21,20 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
         // stocker l'utilisateur dans req (au moins on a vérifié le token et le token est avec le user)
         (req as unknown as { user: TokenUser }).user = decoded;
-
-
-
         next(); // au suivant
     }catch(error){
-        return res.status(401).json({message:"Token invalide",error});
+        console.log("verify token error:", error);
+        return res.status(401).json({message:"Token invalide"});
     }
 };
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as unknown as { user: TokenUser }).user;
+    const user = (req as unknown as { user: TokenUser }).user
 
+    if(!user) return res.status(401).json({message: "Non authentifié"});
 
     if(user.role !== "admin"){
-        return res.status(403).json({message:"Accès refusé (réservé admin"});
+        return res.status(403).json({message:"Accès refusé (réservé admin)"});
     }
-
     next(); // au suivant
 };

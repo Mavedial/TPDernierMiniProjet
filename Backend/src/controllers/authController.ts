@@ -9,15 +9,20 @@ export const register = async (req: Request, res: Response) => {
     try{
         const {username, password, role} =req.body;
 
+        if(!username || !password){
+            return res.status(400).json({message :"Nécessite un Username et un mots de passe !"})
+        }
+        if(!password || password.length < MIN_LENGTH){
+            return res.status(400).json({message : "Le mot de passe doit contenir au minium 8 caractères !"});
+        }
+
+
         // Vérifier si l'utilisateur existe déjà
         const existingUser= await User.findOne({username});
         if(existingUser){
             return res.status(400).json({message : "Utilisateur déjà existant !"});
         }
 
-        if(!password || password.length < MIN_LENGTH){
-            return res.status(400).json({message : "Le mot de passe doit contenir au minium 8 caractères !"});
-        }
 
         // Hasher le mdp compréhension de bcrypt via cette vidéo youtube : https://www.youtube.com/watch?v=_XxrfGrdrB8
         const salt = await bcrypt.genSalt(10);
@@ -31,11 +36,10 @@ export const register = async (req: Request, res: Response) => {
         });
 
         const { password: _, ...userWithoutPwd } = newUser.toObject();
-        return res.status(201).json({ user: userWithoutPwd });
-    }
-
-    catch (error) {
-        return res.status(500).json({message : "Erreur serveur",error});
+        return res.status(201).json({ message: "Utilisateur créee",user: userWithoutPwd });
+    } catch (error) {
+        console.log("register error:",error);
+        return res.status(500).json({message : "Erreur serveur"});
     }
 };
 
@@ -44,6 +48,10 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
     try{
         const {username, password} = req.body;
+
+        if(!username || !password){
+            return res.status(400).json({message :"Nécessite un Username et un mots de passe !"})
+        }
 
         //Trouver l'utilisateur
         const user = await User.findOne({username});
@@ -71,7 +79,8 @@ export const login = async (req: Request, res: Response) => {
             user: {username: user.username, role : user.role},
         });
     } catch (error) {
-        return res.status(500).json({message : "Erreur serveur",error});
+        console.log("login error",error);
+        return res.status(500).json({message : "Erreur serveur"});
     }
 }
 

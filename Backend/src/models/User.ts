@@ -1,9 +1,17 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
+
+export interface IUser extends Document {
+    username: string;
+    password: string;
+    role: string;
+    createdAat : Date;
+}
 
 const UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["admin", "user"], default: "user" }
+    role: { type: String, enum: ["admin", "editor"], default: "editor" },
+    createdAat: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model<IUser>("User", UserSchema);
