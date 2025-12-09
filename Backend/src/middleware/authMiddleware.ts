@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from "express"
 import jwt from "jsonwebtoken";
+import {AuthRequest} from "../types/AuthRequest";
 
 type TokenUser = {
     id: string;
@@ -20,7 +21,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenUser;
 
         // stocker l'utilisateur dans req (au moins on a vérifié le token et le token est avec le user)
-        (req as unknown as { user: TokenUser }).user = decoded;
+        (req as AuthRequest).user = decoded;
         next(); // au suivant
     }catch(error){
         console.log("verify token error:", error);
@@ -29,7 +30,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const user = (req as unknown as { user: TokenUser }).user
+    const user = (req as AuthRequest).user
 
     if(!user) return res.status(401).json({message: "Non authentifié"});
 

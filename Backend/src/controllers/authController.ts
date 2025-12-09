@@ -35,7 +35,7 @@ export const register = async (req: Request, res: Response) => {
             role : role || "editor",
         });
 
-        const { password: _, ...userWithoutPwd } = newUser.toObject();
+        const { password:_, ...userWithoutPwd } = newUser.toObject();
         return res.status(201).json({ message: "Utilisateur créee",user: userWithoutPwd });
     } catch (error) {
         console.log("register error:",error);
