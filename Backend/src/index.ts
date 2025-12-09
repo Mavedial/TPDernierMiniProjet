@@ -3,11 +3,12 @@ import dotenv from "dotenv";
 import cors from "cors";
 import {connectDB} from "./config/db";
 import authRoute from "./routes/authRoutes";
+import heroRoute from "./routes/heroRoutes";
+
 dotenv.config();
 
 const app = express();
 
-app.use("/api/auth", authRoute);
 app.use(
     cors({
         origin: process.env.CORS_ORIGIN,
@@ -18,7 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoute);
-//app.use("/api/heroes", heroRoute);
+app.use("/api/heros", heroRoute);
 
 const PORT = process.env.PORT || 5000;
 connectDB()
