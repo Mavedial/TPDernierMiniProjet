@@ -12,8 +12,8 @@ export interface IPowerstats {
 export interface IAppearance {
     gender?: string;
     race?: string;
-    height?: string[]; // ex: ["5'10", "178 cm"]
-    weight?: string[]; // ex: ["181 lb", "81 kg"]
+    height?: string[]; // ex: ["5'5", "165 cm"]
+    weight?: string[]; // ex: ["126 lb", "57 kg"]
     eyeColor?: string;
     hairColor?: string;
 }
@@ -36,18 +36,9 @@ export interface IImages {
 }
 
 export interface IHero extends Document {
-    externalId?: number;
+    id?: number; // id présent dans le JSON source
     name?: string;
     slug?: string;
-    nom?: string;
-    alias?: string;
-    univers?: string;
-    pouvoirs?: string[];
-    description?: string;
-    image?: string;
-    origine?: string;
-    premiereApparition?: string;
-    createdAt?: Date;
 
     powerstats?: IPowerstats;
     appearance?: IAppearance;
@@ -56,23 +47,26 @@ export interface IHero extends Document {
     connections?: Record<string, unknown>;
     images?: IImages;
 
+    nom?: string;
+    alias?: string;
+    univers?: string;
+    pouvoirs?: string[];
+    description?: string;
+    origine?: string;
+    premiereApparition?: string;
+
+    createdAt?: Date;
     rawData?: Record<string, unknown>;
 }
 
 const HeroSchema: Schema = new Schema(
     {
-        externalId: { type: Number },
-        name: { type: String },
-        slug: { type: String },
-        nom: { type: String },
-        alias: { type: String },
-        univers: { type: String, enum: ["Marvel", "DC", "Autre"], default: "Autre" },
-        pouvoirs: { type: [String], default: [] },
-        description: { type: String },
-        image: { type: String },
-        origine: { type: String },
-        premiereApparition: { type: String },
-        createdAt: { type: Date, default: Date.now },
+        // Source id (numérique) — représente "id" dans votre JSON
+        id: { type: Number, index: true },
+
+        // Données principales
+        name: { type: String, index: true },
+        slug: { type: String, index: true },
 
         powerstats: {
             intelligence: Number,
@@ -112,10 +106,25 @@ const HeroSchema: Schema = new Schema(
             lg: String,
         },
 
-        // Keep original raw object to avoid any data loss
+        // Champs de compatibilité/front
+        nom: { type: String },
+        alias: { type: String },
+        univers: { type: String, default: "Autre" },
+        pouvoirs: { type: [String], default: [] },
+        description: { type: String },
+        origine: { type: String },
+        premiereApparition: { type: String },
+
+        // Conserver l'objet brut si besoin
         rawData: { type: Schema.Types.Mixed },
+
+
+        createdAt: { type: Date, default: Date.now },
     },
-    { strict: false } // allow extra fields if any — keeps flexibility
+    {
+        strict: false,
+    }
 );
 
-export default mongoose.model<IHero>("Hero", HeroSchema);
+
+export default mongoose.model<IHero>("Hero", HeroSchema, "heroes");

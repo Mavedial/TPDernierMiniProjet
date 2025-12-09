@@ -65,10 +65,10 @@ export const getHeroes = async (req: Request, res: Response) => {
         if (ordre === "alpha") {
             query = query.sort({ nom: 1 });
         } else if (ordre === "recent") {
-            query = query. sort({ createdAt: -1 });// 1:ascendant -1 : Descendant
+            query = query.sort({ createdAt: -1 });// 1:ascendant -1 : Descendant
         }
 
-        const heroes = await query. exec();
+        const heroes = await query.exec();
         return res.json(heroes);
     } catch (error) {
         logger.error("getHeroes error:", error);
@@ -78,12 +78,22 @@ export const getHeroes = async (req: Request, res: Response) => {
 
 // GET HERO BY ID
 export const getHeroById = async (req: Request, res: Response) => {
+    const rawId = req.params.id;
+    const idNum = Number(rawId);
+
+    // Vérifier que la valeur fournie est un nombre entier
+    if (!Number.isInteger(idNum)) {
+        return res.status(400).json({ message: "ID invalide : doit être un entier numérique." });
+    }
+
     try {
-        const hero = await Hero.findById(req.params.id);
-        if (!hero) return res.status(404).json({ message: "Héros introuvable..." });
-        return res.json(hero);
-    } catch (error) {
-        logger.error("getHeroById error:", error);
+        const hero = await Hero.findOne({ id: idNum }).lean();
+        if (!hero) {
+            return res.status(404).json({ message: "Héros non trouvé" });
+        }
+        return res.status(200).json(hero);
+    } catch (err) {
+        logger.error("getHeroById error:", err);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
