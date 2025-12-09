@@ -9,7 +9,7 @@ dotenv.config();
 
 const seedDatabase = async ()=> {
     try{
-        await mongoose.connect(process.env.MONGODB_URI!);
+        await mongoose.connect(process.env.MONGO_URI!);
         logger.info("MongoDB Connecté");
 
         const dataPath = path.join(__dirname, "../SuperHerosComplet.json")

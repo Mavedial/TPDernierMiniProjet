@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response) => {
 
         logger.info(`Nouvel utilisateur crée: ${username} (rôle: ${role})`)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password: _, ...userWithoutPwd } = newUser.toObject();
+        const { password: _password, ...userWithoutPwd } = newUser.toObject();
         return res.status(201).json({ message: "Utilisateur créee",user: userWithoutPwd });
     } catch (error) {
         logger.error("Erreur lors de l'inscription:",error);
