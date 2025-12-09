@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import Hero from "../models/Hero";
 import fs from "fs";
 import path from "path";
+import {logger} from "../utils/logger";
 
 // Necessité de faire des types car l'utilisation de any n'est pas possible
 // === TYPES ===
@@ -70,7 +71,7 @@ export const getHeroes = async (req: Request, res: Response) => {
         const heroes = await query. exec();
         return res.json(heroes);
     } catch (error) {
-        console.log("getHeroes error:", error);
+        logger.error("getHeroes error:", error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -82,7 +83,7 @@ export const getHeroById = async (req: Request, res: Response) => {
         if (!hero) return res.status(404).json({ message: "Héros introuvable..." });
         return res.json(hero);
     } catch (error) {
-        console.log("getHeroById error:", error);
+        logger.error("getHeroById error:", error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -93,7 +94,10 @@ export const createHero = async (req: RequestWithFile, res: Response) => {
         const { nom, alias, univers, pouvoirs, description, origine, premiereApparition } = req.body as HeroBody;
         const image = req.file ? req.file.filename : undefined;
 
-        if (!nom) return res. status(400).json({ message: "Le champs NOM est obligatoire !" });
+        if (!nom) {
+            logger.warn("Tentative de création de héros sans nom");
+            return res. status(400).json({ message: "Le champs NOM est obligatoire !" });
+        }
 
         const parsedPouvoirs = pouvoirs
             ? (typeof pouvoirs === "string" ? JSON.parse(pouvoirs) : pouvoirs)
@@ -110,10 +114,10 @@ export const createHero = async (req: RequestWithFile, res: Response) => {
             premiereApparition,
             image,
         });
-
+        logger.info(`Héros crée : ${hero.nom} (ID: ${hero._id})`);
         return res.status(201). json(hero);
     } catch (error) {
-        console. log("createHero error:", error);
+        logger.error("createHero error:", error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -145,7 +149,7 @@ export const updateHero = async (req: RequestWithFile, res: Response) => {
         if (!updated) return res. status(404).json({ message: "Héros introuvable." });
         return res.json(updated);
     } catch (error) {
-        console.log("updateHero erreur:", error);
+        logger.error("updateHero erreur:", error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -154,7 +158,10 @@ export const updateHero = async (req: RequestWithFile, res: Response) => {
 export const deleteHero = async (req: Request, res: Response) => {
     try {
         const hero = await Hero.findByIdAndDelete(req.params.id) as HeroDocument | null;  // supprime le héros par mongoose
-        if (!hero) return res. status(404).json({ message: "Héros introuvable." });
+        if (!hero){
+            logger.warn(`Tentative de suppresion d'un héros inexistant (ID: ${req.params.id})`);
+            return res. status(404).json({ message: "Héros introuvable." });
+        }
 
         if (hero.image) {
             const imagePath = path.join(__dirname, "../uploads", hero.image);// construction du chemin de l'image
@@ -162,10 +169,11 @@ export const deleteHero = async (req: Request, res: Response) => {
                 fs.unlinkSync(imagePath); // supprime l'ancienne image
             }
         }
+        logger.info(`Héros supprimé: ${hero.nom} (ID: ${hero._id})`);
         return res.json({ message: "Héros supprimé !" });
 
     } catch (error) {
-        console.log("deleteHero erreur:", error);
+        logger.error("deleteHero erreur:", error);
         return res.status(500).json({ message: "Erreur serveur" });
     }
 };

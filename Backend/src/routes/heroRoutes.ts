@@ -19,6 +19,6 @@ router.get("/:id",getHeroById);
 //routes protegees
 router.post("/", verifyToken, upload.single("image"), createHero);
 router.put("/:id", verifyToken, upload.single("image"), updateHero);
-router.delete("/:id", verifyToken, isAdmin, permit("admin"), deleteHero);
+router.delete("/:id", verifyToken, permit("admin"), deleteHero);
 
 export default router;

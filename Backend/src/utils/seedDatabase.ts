@@ -3,13 +3,14 @@ import Hero from "../models/Hero";
 import fs from "fs";
 import path from "path";
 import dotenv from "dotenv";
+import {logger} from "./logger";
 
 dotenv.config();
 
 const seedDatabase = async ()=> {
     try{
         await mongoose.connect(process.env.MONGODB_URI!);
-        console.log("MongoDB Connecté");
+        logger.info("MongoDB Connecté");
 
         const dataPath = path.join(__dirname, "../SuperHerosComplet.json")
         const data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
@@ -17,10 +18,10 @@ const seedDatabase = async ()=> {
         await Hero.deleteMany({}); // Nettoyer la base
         await Hero.insertMany(data);
 
-        console.log(`${data.length} heros importés`);
+        logger.info(`${data.length} heros importés`);
         process.exit(0);
     }catch(error){
-        console.log("Erreur",error);
+        logger.error("Erreur",error);
         process.exit(1);
     }
 };

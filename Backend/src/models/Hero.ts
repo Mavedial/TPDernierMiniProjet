@@ -4,7 +4,7 @@ export interface IHero extends Document {
     nom: string;
     alias: string;
     univers: string;
-    pouvoirs: string;
+    pouvoirs: string[];
     description: string;
     image: string;
     origine: string;

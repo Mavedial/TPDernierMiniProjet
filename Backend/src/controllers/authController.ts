@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
+import {logger} from "../utils/logger";
 const MIN_LENGTH = 8;
 
 //nouvelle utilisateur
@@ -20,6 +21,7 @@ export const register = async (req: Request, res: Response) => {
         // Vérifier si l'utilisateur existe déjà
         const existingUser= await User.findOne({username});
         if(existingUser){
+            logger.warn(`Tentative d'inscription avec un username déjà existant: ${username}`);
             return res.status(400).json({message : "Utilisateur déjà existant !"});
         }
 
@@ -35,10 +37,12 @@ export const register = async (req: Request, res: Response) => {
             role : role || "editor",
         });
 
-        const { password:_, ...userWithoutPwd } = newUser.toObject();
+        logger.info(`Nouvel utilisateur crée: ${username} (rôle: ${role})`)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password: _, ...userWithoutPwd } = newUser.toObject();
         return res.status(201).json({ message: "Utilisateur créee",user: userWithoutPwd });
     } catch (error) {
-        console.log("register error:",error);
+        logger.error("Erreur lors de l'inscription:",error);
         return res.status(500).json({message : "Erreur serveur"});
     }
 };
@@ -56,12 +60,14 @@ export const login = async (req: Request, res: Response) => {
         //Trouver l'utilisateur
         const user = await User.findOne({username});
         if(!user){
+            logger.warn(`Tentative de connexion avec username inexistant : ${username}`);
             return res.status(400).json({message : "Utilisateur introuvable !"});
         }
 
         //Vérifier le mdp
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
+            logger.warn(`Tentative de connexion avec mot de passe incorrect pour : ${username}`);
             return res.status(400).json({message : "Mot de passe incorrect !"});
         }
 
@@ -73,13 +79,14 @@ export const login = async (req: Request, res: Response) => {
         );
 
         //retourne le message de réussite ,le token et le user
+        logger.info(`Connexion réussie pour ${username}`);
         return res.json({
             message: "Connexion réussie !",
             token,
             user: {username: user.username, role : user.role},
         });
     } catch (error) {
-        console.log("login error",error);
+        logger.error("Erreur lors de la connexion",error);
         return res.status(500).json({message : "Erreur serveur"});
     }
 }

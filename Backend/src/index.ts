@@ -4,6 +4,8 @@ import cors from "cors";
 import {connectDB} from "./config/db";
 import authRoute from "./routes/authRoutes";
 import heroRoute from "./routes/heroRoutes";
+import path from "path";
+import {logger} from "./utils/logger";
 
 dotenv.config();
 
@@ -15,6 +17,7 @@ app.use(
     })
 );
 app.use(express.json());
+app.use("uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // Routes
@@ -25,10 +28,10 @@ const PORT = process.env.PORT || 5000;
 connectDB()
 .then(() => {
     app.listen(PORT, () => {
-        console.log(`Serveur lancé sur le port ${PORT}`);
+        logger.info(`Serveur lancé sur le port ${PORT}`);
     });
 })
     .catch((err) => {
-        console.error("Impossible de démarrer le serveur, erreur de connexion DB:", err);
+        logger.error("Impossible de démarrer le serveur, erreur de connexion DB:", err);
         process.exit(1);
     });

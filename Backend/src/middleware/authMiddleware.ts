@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from "express"
 import jwt from "jsonwebtoken";
 import {AuthRequest} from "../types/AuthRequest";
+import {logger} from "../utils/logger";
 
 type TokenUser = {
     id: string;
@@ -24,7 +25,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
         (req as AuthRequest).user = decoded;
         next(); // au suivant
     }catch(error){
-        console.log("verify token error:", error);
+        logger.error("verify token error:", error);
         return res.status(401).json({message:"Token invalide"});
     }
 };
@@ -35,6 +36,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
     if(!user) return res.status(401).json({message: "Non authentifié"});
 
     if(user.role !== "admin"){
+        logger.warn(`Tentative d'accès admin refusée pour l'utilisateur ${user.id}`);
         return res.status(403).json({message:"Accès refusé (réservé admin)"});
     }
     next(); // au suivant

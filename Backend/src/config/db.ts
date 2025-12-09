@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
+import {logger} from "../utils/logger";
 
 export const connectDB = async () => {
     if (!process.env.MONGO_URI) {
-        console.error("MONGO_URI non défini");
+        logger.error("MONGO_URI non défini");
         process.exit(1);
     }
     try {
         await mongoose.connect(process.env.MONGO_URI);
-        console.log("MongoDB connecté");
+        logger.info("MongoDB connecté");
     } catch (error) {
-        console.log("Erreur connexion MongoDB :", error);
+        logger.error("Erreur connexion MongoDB :", error);
         process.exit(1);
     }
 };
