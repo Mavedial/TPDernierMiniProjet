@@ -8,7 +8,7 @@ interface HeroCardProps {
 
 export const HeroCard = ({ hero }: HeroCardProps) => {
     const imagePath = hero.images?.md ?? hero.images?.lg ?? hero.images?.sm ?? '';
-    const imageUrl = imagePath ?`/uploads/${imagePath}` : '/placeholder.jpg';
+    const imageUrl = imagePath ?`/uploads/md/${imagePath}` : '/placeholder.jpg';
 
     const displayName = hero.name || hero.nom || 'Sans nom';
 

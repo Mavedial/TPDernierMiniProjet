@@ -24,7 +24,7 @@ export const EditHero = () => {
     };
 
     const handleSubmit = async (formData: FormData) => {
-        if (!hero?. id) return;
+        if (!hero?.id) return;
         try {
             await heroApi.update(hero.id, formData);
             alert('Héros mis à jour !');
