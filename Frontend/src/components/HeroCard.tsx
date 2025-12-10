@@ -26,7 +26,7 @@ export const HeroCard = ({ hero }:  HeroCardProps) => {
                 <strong>Éditeur:</strong> {hero.biography?.publisher || hero.univers || 'Inconnu'}
             </p>
             <p style={{ color: '#666', fontSize: '.85rem' }}>
-                <strong>Personnalité:</strong> {hero. biography?.alignment || 'N/A'}
+                <strong>Personnalité:</strong> {hero.biography?.alignment || 'N/A'}
             </p>
             <div className="hero-meta">
                 <Link to={`/hero/${hero.id}`} style={{ color: '#007bff', textDecoration: 'none' }}>

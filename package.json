@@ -2,7 +2,7 @@
   "name": "tpdernierminiprojet",
   "version": "1.0.0",
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "main": "eslint.config.js",
+  "main": "Frontend/eslint.config.js",
   "dependencies": {
     "acorn": "^8.15.0",
     "acorn-jsx": "^5.3.2",

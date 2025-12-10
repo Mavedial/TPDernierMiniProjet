@@ -14,7 +14,7 @@ export const Navbar = () => {
                     <>
                         <Link to="/" style={{ color: '#fff' }}>Dashboard</Link>
                         <Link to="/add-hero" style={{ color: '#fff' }}>Ajouter un héros</Link>
-                        {user?. role === 'admin' && (
+                        {user?.role === 'admin' && (
                             <Link to="/admin" style={{ color: '#fff' }}>Admin</Link>
                         )}
                         <span style={{ marginLeft: 'auto' }}>

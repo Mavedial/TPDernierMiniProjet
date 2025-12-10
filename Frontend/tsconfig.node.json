@@ -23,6 +23,6 @@
     "noUncheckedSideEffectImports": true
   },
   "include": [
-    "Frontend/vite.config.ts"
+    "vite.config.ts"
   ]
 }

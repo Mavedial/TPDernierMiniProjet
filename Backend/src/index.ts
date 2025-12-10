@@ -17,7 +17,7 @@ app.use(
     })
 );
 app.use(express.json());
-app.use('/uploads', express. static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 // Routes
@@ -26,11 +26,11 @@ app.use("/api/heroes", heroRoute);
 
 const PORT = process.env.PORT || 5000;
 connectDB()
-.then(() => {
-    app.listen(PORT, () => {
-        logger.info(`Serveur lancé sur le port ${PORT}`);
-    });
-})
+    .then(() => {
+        app.listen(PORT, () => {
+            logger.info(`Serveur lancé sur le port ${PORT}`);
+        });
+    })
     .catch((err) => {
         logger.error("Impossible de démarrer le serveur, erreur de connexion DB:", err);
         process.exit(1);
