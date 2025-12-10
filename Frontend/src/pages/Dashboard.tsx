@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Hero } from '../types/hero';
 import { heroApi } from '../api/heroApi';
 import { HeroCard } from '../components/HeroCard';
@@ -9,6 +10,7 @@ export const Dashboard = () => {
     const [heroes, setHeroes] = useState<Hero[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         void fetchHeroes();
@@ -18,14 +20,14 @@ export const Dashboard = () => {
     const fetchHeroes = async () => {
         try {
             setLoading(true);
-            const params:  { [k: string]: string } = {};
+            const params: { [k: string]: string } = {};
             if (searchQuery) params.research = searchQuery;
 
             const response = await heroApi.getAll(params);
             setHeroes(response.data);
-        } catch (err:  unknown) {
+        } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
-                const msg = err.response?.data?.message ??  'Erreur lors de la récupération des héros';
+                const msg = err.response?.data?.message ?? 'Erreur lors de la récupération des héros';
                 console.error('fetchHeroes error (axios):', msg);
             } else if (err instanceof Error) {
                 console.error('fetchHeroes error:', err.message);
@@ -41,13 +43,36 @@ export const Dashboard = () => {
         setSearchQuery(query);
     };
 
+    const handleEdit = (hero: Hero) => {
+        const idForRoute = hero.id ?? hero._id;
+        navigate(`/edit-hero/${idForRoute}`);
+    };
+
+    const handleDelete = async (hero: Hero) => {
+        if (!confirm(`Supprimer "${hero.name || hero.nom || 'ce héros'}" ?`)) return;
+        try {
+            const idForApi = (hero.id ?? hero._id) as unknown as number;
+            await heroApi.delete(idForApi);
+
+            // Mettre à jour localement la liste sans recharger
+            setHeroes(prev => prev.filter(h => {
+                const idA = String(h.id ?? h._id);
+                const idB = String(hero.id ?? hero._id);
+                return idA !== idB;
+            }));
+        } catch (err: unknown) {
+            console.error('Erreur suppression (Dashboard):', err);
+            alert('Erreur lors de la suppression du héros');
+        }
+    };
+
     return (
         <div>
             <SearchBar onSearch={handleSearch} />
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Chargement...</p>
             ) : heroes.length === 0 ? (
-                <p style={{ textAlign: 'center', padding: '2rem' }}>Aucun héros trouvé. </p>
+                <p style={{ textAlign: 'center', padding: '2rem' }}>Aucun héros trouvé.</p>
             ) : (
                 <div
                     style={{
@@ -58,7 +83,13 @@ export const Dashboard = () => {
                     }}
                 >
                     {heroes.map((hero) => (
-                        <HeroCard key={String(hero._id ??  hero.id)} hero={hero} />
+                        <HeroCard
+                            key={String(hero._id ?? hero.id)}
+                            hero={hero}
+                            canEdit={true}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
                     ))}
                 </div>
             )}
