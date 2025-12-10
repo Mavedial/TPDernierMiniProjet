@@ -62,6 +62,9 @@ export const HeroCard = ({ hero, canEdit = false, onEdit, onDelete }: HeroCardPr
             <p style={{ color: '#333', fontSize: '.9rem' }}>
                 <strong>Éditeur:</strong> {hero.biography?.publisher || hero.univers || 'Inconnu'}
             </p>
+            <p style={{ color: '#666', fontSize: '.85rem' }}>
+                <strong>Personnalité:</strong> {hero.biography?.alignment || 'N/A'}
+            </p>
 
             <div className="hero-meta" style={{ display: 'flex', gap: '.5rem', alignItems: 'center', marginTop: 'auto' }}>
                 <Link to={`/hero/${hero.id ?? hero._id}`} style={{ color: '#007bff', textDecoration: 'none' }}>
