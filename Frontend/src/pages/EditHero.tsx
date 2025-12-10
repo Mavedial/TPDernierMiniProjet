@@ -11,6 +11,7 @@ export const EditHero = () => {
 
     useEffect(() => {
         if (id) fetchHero(Number(id));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     const fetchHero = async (heroId: number) => {

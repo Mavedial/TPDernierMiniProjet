@@ -21,7 +21,7 @@ export const Dashboard = () => {
             const params:  { [k: string]: string } = {};
             if (searchQuery) params.research = searchQuery;
 
-            const response = await heroApi. getAll(params);
+            const response = await heroApi.getAll(params);
             setHeroes(response.data);
         } catch (err:  unknown) {
             if (axios.isAxiosError(err)) {

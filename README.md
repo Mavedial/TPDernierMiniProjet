@@ -1,75 +1,206 @@
-# React + TypeScript + Vite
+# SuperHero Manager
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack web application for managing superheroes, built with React, TypeScript, Node.js, Express, and MongoDB.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication (login/register)
+- Role-based access control (admin/editor)
+- CRUD operations for superheroes
+- Image upload for hero profiles
+- Protected routes
+- JWT-based authentication
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Frontend
+- React 19
+- TypeScript
+- Vite
+- React Router DOM
+- Axios
 
-Note: This will impact Vite dev & build performances.
+### Backend
+- Node.js
+- Express 5
+- TypeScript
+- MongoDB with Mongoose
+- JWT for authentication
+- Bcrypt for password hashing
+- Multer for file uploads
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (v18 or higher)
+- MongoDB (running locally or a MongoDB Atlas connection)
+- npm or yarn
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 1. Clone the repository
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/Mavedial/TPDernierMiniProjet.git
+cd TPDernierMiniProjet
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install Backend dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd Backend
+npm install
 ```
+
+### 3. Install Frontend dependencies
+
+```bash
+cd ../Frontend
+npm install
+```
+
+### 4. Configure Backend environment
+
+Create a `.env` file in the `Backend` directory (you can copy from `.env.example`):
+
+```bash
+cd ../Backend
+cp .env.example .env
+```
+
+Edit the `.env` file with your configuration:
+
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/superhero
+JWT_SECRET=your-secret-jwt-key-change-this-in-production
+CORS_ORIGIN=http://localhost:5173
+```
+
+**Important:** 
+- Replace `MONGO_URI` with your MongoDB connection string
+- Replace `JWT_SECRET` with a strong secret key in production
+
+## Running the Application
+
+### Start MongoDB
+
+Make sure MongoDB is running on your system:
+
+```bash
+# For local MongoDB
+sudo systemctl start mongod  # Linux
+brew services start mongodb-community  # macOS
+# Or use MongoDB Atlas cloud database
+```
+
+### Start the Backend Server
+
+```bash
+cd Backend
+npm run dev
+```
+
+The backend server will start on `http://localhost:5000`
+
+### Start the Frontend Development Server
+
+In a new terminal:
+
+```bash
+cd Frontend
+npm run dev
+```
+
+The frontend will start on `http://localhost:5173`
+
+## Building for Production
+
+### Build Frontend
+
+```bash
+cd Frontend
+npm run build
+```
+
+The built files will be in the `Frontend/dist` directory.
+
+### Build Backend
+
+The backend uses ts-node-dev for development. For production, you can compile TypeScript:
+
+```bash
+cd Backend
+npx tsc
+```
+
+The compiled files will be in the `Backend/dist` directory.
+
+## Project Structure
+
+```
+TPDernierMiniProjet/
+├── Backend/
+│   ├── src/
+│   │   ├── config/        # Database configuration
+│   │   ├── controllers/   # Route controllers
+│   │   ├── middleware/    # Authentication & authorization
+│   │   ├── models/        # Mongoose models
+│   │   ├── routes/        # Express routes
+│   │   ├── types/         # TypeScript types
+│   │   ├── uploads/       # Uploaded files
+│   │   ├── utils/         # Utility functions
+│   │   └── index.ts       # Server entry point
+│   ├── .env.example       # Environment variables template
+│   └── package.json
+├── Frontend/
+│   ├── src/
+│   │   ├── api/           # API client functions
+│   │   ├── components/    # React components
+│   │   ├── context/       # React context (Auth)
+│   │   ├── hooks/         # Custom hooks
+│   │   ├── pages/         # Page components
+│   │   ├── styles/        # CSS files
+│   │   └── types/         # TypeScript types
+│   ├── index.html
+│   └── package.json
+└── README.md
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+
+### Heroes (Protected)
+- `GET /api/heroes` - Get all heroes
+- `GET /api/heroes/:id` - Get a single hero
+- `POST /api/heroes` - Create a new hero (requires authentication)
+- `PUT /api/heroes/:id` - Update a hero (requires authentication)
+- `DELETE /api/heroes/:id` - Delete a hero (requires admin role)
+
+## Default User Roles
+
+- **admin**: Full access to all operations
+- **editor**: Can create and edit heroes, but cannot delete
+
+## Troubleshooting
+
+### MongoDB Connection Error
+- Ensure MongoDB is running
+- Check if the `MONGO_URI` in `.env` is correct
+- Verify network connectivity if using MongoDB Atlas
+
+### Port Already in Use
+- Change the `PORT` in `Backend/.env`
+- Change the port in `Frontend/vite.config.ts` if needed
+- Update `CORS_ORIGIN` in `Backend/.env` to match the new frontend port
+
+### Dependencies Issues
+- Delete `node_modules` and `package-lock.json`
+- Run `npm install` again
+
+## License
+
+ISC
+

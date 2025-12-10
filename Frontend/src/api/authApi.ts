@@ -17,7 +17,7 @@ export const authApi = {
 
     getUser: (): User | null => {
         const userStr = localStorage.getItem('user');
-        return userStr ? JSON. parse(userStr) : null;
+        return userStr ? JSON.parse(userStr) : null;
     },
 
     isAuthenticated: () => !!localStorage.getItem('token'),
