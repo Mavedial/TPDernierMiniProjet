@@ -17,8 +17,7 @@ app.use(
     })
 );
 app.use(express.json());
-const uploadsPath = path.join(__dirname, '..', 'uploads');
-app.use('/uploads', express.static(uploadsPath));
+app.use('/uploads', express. static(path.join(__dirname, 'uploads')));
 
 
 // Routes

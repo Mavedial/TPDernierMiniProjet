@@ -78,7 +78,8 @@ export const HeroDetails = () => {
     if (!hero) return <p>Héros non trouvé</p>;
 
     const canEdit = isAuthenticated && (user?.role === 'admin' || user?.role === 'editor');
-    const imageUrl = hero.images?.lg || hero.images?.md || '/placeholder.jpg';
+    const fileName = hero.slug ?  `${hero.slug}.jpg` : '';
+    const imageUrl = fileName ? `http://localhost:5000/uploads/md/${fileName}` : '/placeholder.jpg';
 
     // Fonctions utilitaires sûres pour extraire des champs potentiellement manquants
     const getOccupation = (): string => {

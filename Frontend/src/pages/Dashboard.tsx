@@ -8,30 +8,24 @@ import axios from 'axios';
 export const Dashboard = () => {
     const [heroes, setHeroes] = useState<Hero[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState({
-        research: '',
-        univers: '',
-        ordre: '',
-    });
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         void fetchHeroes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [filters]);
+    }, [searchQuery]);
 
     const fetchHeroes = async () => {
         try {
             setLoading(true);
-            const params: { [k: string]: string } = {};
-            if (filters.research) params.research = filters.research;
-            if (filters.univers) params.univers = filters.univers;
-            if (filters.ordre) params.ordre = filters.ordre;
+            const params:  { [k: string]: string } = {};
+            if (searchQuery) params.research = searchQuery;
 
-            const response = await heroApi.getAll(params);
+            const response = await heroApi. getAll(params);
             setHeroes(response.data);
-        } catch (err: unknown) {
+        } catch (err:  unknown) {
             if (axios.isAxiosError(err)) {
-                const msg = err.response?.data?.message ?? 'Erreur lors de la récupération des héros';
+                const msg = err.response?.data?.message ??  'Erreur lors de la récupération des héros';
                 console.error('fetchHeroes error (axios):', msg);
             } else if (err instanceof Error) {
                 console.error('fetchHeroes error:', err.message);
@@ -44,24 +38,16 @@ export const Dashboard = () => {
     };
 
     const handleSearch = (query: string) => {
-        setFilters({ ...filters, research: query });
-    };
-
-    const handleFilterUnivers = (univers: string) => {
-        setFilters({ ...filters, univers });
-    };
-
-    const handleSort = (ordre: string) => {
-        setFilters({ ...filters, ordre });
+        setSearchQuery(query);
     };
 
     return (
         <div>
-            <SearchBar onSearch={handleSearch} onFilterUnivers={handleFilterUnivers} onSort={handleSort} />
+            <SearchBar onSearch={handleSearch} />
             {loading ? (
                 <p style={{ textAlign: 'center' }}>Chargement...</p>
             ) : heroes.length === 0 ? (
-                <p style={{ textAlign: 'center', padding: '2rem' }}>Aucun héros trouvé.</p>
+                <p style={{ textAlign: 'center', padding: '2rem' }}>Aucun héros trouvé. </p>
             ) : (
                 <div
                     style={{
@@ -72,7 +58,7 @@ export const Dashboard = () => {
                     }}
                 >
                     {heroes.map((hero) => (
-                        <HeroCard key={String(hero._id ?? hero.id)} hero={hero} />
+                        <HeroCard key={String(hero._id ??  hero.id)} hero={hero} />
                     ))}
                 </div>
             )}

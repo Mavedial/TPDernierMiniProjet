@@ -2,11 +2,9 @@ import { useState } from 'react';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
-    onFilterUnivers: (univers: string) => void;
-    onSort: (order: string) => void;
 }
 
-export const SearchBar = ({ onSearch, onFilterUnivers, onSort }: SearchBarProps) => {
+export const SearchBar = ({ onSearch }: SearchBarProps) => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const handleSearch = (e: React.FormEvent) => {
@@ -27,18 +25,6 @@ export const SearchBar = ({ onSearch, onFilterUnivers, onSort }: SearchBarProps)
                 <button type="submit" style={{ padding:  '0.5rem 1rem' }}>
                     Rechercher
                 </button>
-
-                <select onChange={(e) => onFilterUnivers(e.target.value)} style={{ padding: '0.5rem' }}>
-                    <option value="">Tous les univers</option>
-                    <option value="Marvel">Marvel</option>
-                    <option value="DC">DC</option>
-                    <option value="Autre">Autre</option>
-                </select>
-
-                <select onChange={(e) => onSort(e.target.value)} style={{ padding: '0.5rem' }}>
-                    <option value="">Tri par défaut</option>
-                    <option value="alpha">Alphabétique</option>
-                </select>
             </form>
         </div>
     );
